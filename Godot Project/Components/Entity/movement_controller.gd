@@ -58,6 +58,7 @@ func move(delta: float) -> void:
 	else:
 		character_body.velocity.x = move_toward(character_body.velocity.x, 0, walk_speed)
 
+	print(character_body.velocity)
 	character_body.move_and_slide()
 
 
