@@ -10,6 +10,7 @@ extends Node
 @export_subgroup("Walk")
 @export var maximum_walk_speed: float = 300
 @export var acceleration: float = 50
+@export var deceleration: float = 40
 @export_subgroup("Dash")
 @export var dash_speed_multiplier: float = 5
 @export_subgroup("Jump")
@@ -63,8 +64,10 @@ func move(delta: float) -> void:
 			character_body.velocity.x = direction * maximum_walk_speed
 			
 		is_looking_right = direction > 0
+	
+	# not pressing movement button
 	else:
-		character_body.velocity.x = move_toward(character_body.velocity.x, 0, maximum_walk_speed)
+		character_body.velocity.x = move_toward(character_body.velocity.x, 0, deceleration)
 
 	character_body.move_and_slide()
 
