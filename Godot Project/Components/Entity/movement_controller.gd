@@ -7,8 +7,12 @@ extends Node
 @export var dash_cooldown_timer: Timer
 
 @export_group("Parameters")
-@export var walk_speed: float = 300
+@export_subgroup("Walk")
+@export var maximum_walk_speed: float = 300
+@export var acceleration: float = 50
+@export_subgroup("Dash")
 @export var dash_speed_multiplier: float = 5
+@export_subgroup("Jump")
 @export var jump_velocity: float = 400
 @export_range(0, 1) var jump_release_deceleration = 0.5
 
@@ -18,8 +22,8 @@ var is_looking_right: bool = true
 
 var double_jump_active:bool = false
 
-@onready var base_walk_speed: float = walk_speed
-@onready var dash_speed: float = walk_speed * dash_speed_multiplier
+@onready var base_walk_speed: float = maximum_walk_speed
+@onready var dash_speed: float = maximum_walk_speed * dash_speed_multiplier
 
 func move(delta: float) -> void:
 	if !character_body.is_on_floor() && !is_dashing:
@@ -39,7 +43,7 @@ func move(delta: float) -> void:
 	if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
 		is_dashing = true
 		is_dash_on_cooldown = true
-		walk_speed = dash_speed
+		maximum_walk_speed = dash_speed
 		dash_duration_timer.start()
 		
 	var direction: float
@@ -53,10 +57,14 @@ func move(delta: float) -> void:
 		direction = Input.get_axis("Left", "Right")
 	
 	if direction:
-		character_body.velocity.x = direction * walk_speed
+		if character_body.velocity.x < maximum_walk_speed:
+			character_body.velocity.x += direction * acceleration
+		else:
+			character_body.velocity.x = direction * maximum_walk_speed
+			
 		is_looking_right = direction > 0
 	else:
-		character_body.velocity.x = move_toward(character_body.velocity.x, 0, walk_speed)
+		character_body.velocity.x = move_toward(character_body.velocity.x, 0, maximum_walk_speed)
 
 	print(character_body.velocity)
 	character_body.move_and_slide()
@@ -64,7 +72,7 @@ func move(delta: float) -> void:
 
 func _on_dash_duration_timeout() -> void:
 	is_dashing = false
-	walk_speed = base_walk_speed
+	maximum_walk_speed = base_walk_speed
 	dash_cooldown_timer.start()
 
 
