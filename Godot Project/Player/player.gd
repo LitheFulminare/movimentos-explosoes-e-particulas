@@ -13,6 +13,9 @@ func _physics_process(delta: float) -> void:
 	
 	if is_in_grappling_hook:
 		grappling_hook_component.move_player(delta)
+		
+	DebugTools.update_velocity_x(velocity.x)
+	DebugTools.update_velocity_y(velocity.y)
 
 func block_movement() -> void:
 	is_movement_blocked = true
