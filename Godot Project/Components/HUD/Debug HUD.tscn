@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8ax4bayyx25p"]
+
+[ext_resource type="Script" uid="uid://d8v6wvubj5oi" path="res://Components/HUD/debug_hud.gd" id="1_br3i4"]
+
+[node name="DebugHud" type="CanvasLayer"]
+script = ExtResource("1_br3i4")
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 247.0
+offset_bottom = 103.0
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_right = 182.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 20
+text = "Velocity X:"
