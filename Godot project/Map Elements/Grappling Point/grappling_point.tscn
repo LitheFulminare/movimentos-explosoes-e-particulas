@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://5ea8d6c6uxdl"]
+
+[ext_resource type="Script" uid="uid://dd83280jear3c" path="res://Map Elements/Grappling Point/grappling_point.gd" id="1_4dms6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_swwwa"]
+size = Vector2(493, 624)
+
+[node name="Grappling Point" type="Node2D" node_paths=PackedStringArray("interaction_area", "destination_point")]
+script = ExtResource("1_4dms6")
+interaction_area = NodePath("Interaction Area")
+destination_point = NodePath("Destination")
+
+[node name="Destination" type="Marker2D" parent="."]
+position = Vector2(250, -251)
+gizmo_extents = 75.0
+
+[node name="Interaction Area" type="Area2D" parent="."]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interaction Area"]
+shape = SubResource("RectangleShape2D_swwwa")
+
+[connection signal="body_entered" from="Interaction Area" to="." method="_on_interaction_area_body_entered"]
+[connection signal="body_exited" from="Interaction Area" to="." method="_on_interaction_area_body_exited"]
