@@ -60,8 +60,23 @@ func move(delta: float) -> void:
 		direction = Input.get_axis("Left", "Right")
 	
 	if direction:
+		# lower than top speed
 		if abs(character_body.velocity.x) < maximum_walk_speed:
-			character_body.velocity.x += direction * acceleration
+			# pressing right
+			if direction == 1:
+				if character_body.velocity.x >= 0:
+					character_body.velocity.x += direction * acceleration
+				else:
+					character_body.velocity.x += direction * deceleration
+			
+			# pressing left
+			if direction == -1:
+				if character_body.velocity.x <= 0:
+					character_body.velocity.x += direction * acceleration
+				else:
+					character_body.velocity.x += direction * deceleration
+			
+		# at top speed
 		else:
 			character_body.velocity.x = direction * maximum_walk_speed
 			
