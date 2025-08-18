@@ -16,6 +16,8 @@ extends Node
 @export_subgroup("Jump")
 @export var jump_velocity: float = 400
 @export_range(0, 1) var jump_release_deceleration = 0.5
+@export_subgroup("Fall")
+#@export var falling_scale
 
 var is_dashing: bool = false
 var is_dash_on_cooldown: bool = false
