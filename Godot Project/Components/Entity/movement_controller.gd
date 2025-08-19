@@ -3,6 +3,7 @@ extends Node
 
 @export_group("Components")
 @export var character_body: CharacterBody2D
+@export var dash_window_timer: Timer
 @export var dash_duration_timer: Timer
 @export var dash_cooldown_timer: Timer
 
@@ -42,7 +43,7 @@ func move(delta: float) -> void:
 	if !character_body.is_on_floor() && !is_dashing:
 		character_body.velocity += character_body.get_gravity() * delta
 
-	if Input.is_action_just_pressed("Up"):
+	if Input.is_action_just_pressed("Jump"):
 		if character_body.is_on_floor():
 			character_body.velocity.y = -jump_velocity
 			double_jump_active = true
@@ -50,14 +51,20 @@ func move(delta: float) -> void:
 			character_body.velocity.y = -jump_velocity
 			double_jump_active = false
 
-	if Input.is_action_just_released("Up"):
+	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
 		
-	if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
-		is_dashing = true
-		is_dash_on_cooldown = true
-		maximum_walk_speed = dash_speed
-		dash_duration_timer.start()
+	# dash mechanic
+	if Input.is_action_just_pressed("Right"):
+		# if player presses the movement button again while the window is active, they dash
+		dash_window_timer.start()
+		
+	# Old dash logic from Operation Venulysian
+	#if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
+		#is_dashing = true
+		#is_dash_on_cooldown = true
+		#maximum_walk_speed = dash_speed
+		#dash_duration_timer.start()
 		
 	var direction: float
 	
