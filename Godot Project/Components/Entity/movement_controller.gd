@@ -11,13 +11,23 @@ extends Node
 @export var maximum_walk_speed: float = 300
 @export var acceleration: float = 50
 @export var deceleration: float = 40
+
 @export_subgroup("Dash")
 @export var dash_speed_multiplier: float = 5
+
 @export_subgroup("Jump")
 @export var jump_velocity: float = 400
 @export_range(0, 1) var jump_release_deceleration = 0.5
+
+@export_subgroup("Fly")
+@export var flying_duration: float = 7
+@export var flying_vertical_speed: float = 2000
+@export var flying_acceleraction: float = 300
+@export var flying_acceleration_multiplier: float = 2
+
 @export_subgroup("Fall")
-#@export var falling_scale
+@export var gravity_scale: float = 1
+@export var falling_scale: float = 1
 
 var is_dashing: bool = false
 var is_dash_on_cooldown: bool = false

@@ -55,6 +55,9 @@ width = 35.0
 texture = ExtResource("4_gwnis")
 texture_mode = 1
 
+[node name="Dash Window" type="Timer" parent="."]
+wait_time = 0.25
+
 [node name="Dash Duration" type="Timer" parent="."]
 wait_time = 0.2
 one_shot = true
@@ -77,5 +80,6 @@ metadata/_edit_use_anchors_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_vfyey")
 
+[connection signal="timeout" from="Dash Window" to="Movement Controller" method="_on_dash_duration_timeout"]
 [connection signal="timeout" from="Dash Duration" to="Movement Controller" method="_on_dash_duration_timeout"]
 [connection signal="timeout" from="Dash Cooldown" to="Movement Controller" method="_on_dash_cooldown_timeout"]
