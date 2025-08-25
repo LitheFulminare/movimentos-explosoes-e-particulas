@@ -106,9 +106,10 @@ func fly() -> void:
 	is_flying = true
 	
 	if (character_body.velocity.y < flying_vertical_speed):
-		character_body.velocity.y += acceleration
+		character_body.velocity.y -= acceleration
 		
-	else: character_body.velocity.y = flying_vertical_speed
+	else: 
+		character_body.velocity.y = flying_vertical_speed
 
 func dash() -> void:
 	is_dashing = true
