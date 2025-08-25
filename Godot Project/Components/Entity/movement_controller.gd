@@ -22,7 +22,7 @@ extends Node
 @export_range(0, 1) var jump_release_deceleration = 0.5
 
 @export_subgroup("Fly")
-@export var flying_duration: float = 7
+@export var flying_duration: float = 3
 @export var flying_vertical_speed: float = 2000
 @export var flying_acceleraction: float = 300
 @export var flying_acceleration_multiplier: float = 2
@@ -59,7 +59,7 @@ func move(delta: float) -> void:
 		#maximum_walk_speed = dash_speed
 		#dash_duration_timer.start()
 		
-	var direction: float = get_direction_from_input()
+	var direction: float = get_direction()
 	
 	set_velocity(direction)
 
@@ -70,13 +70,11 @@ func fall_check(delta: float) -> void:
 		character_body.velocity += character_body.get_gravity() * delta
 
 func input_check() -> void:
-	if Input.is_action_just_pressed("Jump"):
+	if Input.is_action_pressed("Jump"):
 		if character_body.is_on_floor():
 			character_body.velocity.y = -jump_velocity
-			double_jump_active = true
-		elif PlayerVars.double_jump_unlocked && double_jump_active:
-			character_body.velocity.y = -jump_velocity
-			double_jump_active = false
+		else:
+			fly()
 	
 	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
@@ -99,6 +97,9 @@ func input_check() -> void:
 		left_dash_window_active = true
 		print("player pressed left")
 
+func fly() -> void:
+	print("player is flying")
+
 func dash() -> void:
 	is_dashing = true
 	
@@ -106,7 +107,7 @@ func dash() -> void:
 	current_acceleration = acceleration * 10 # replace with a variable
 	dash_duration_timer.start()
 
-func get_direction_from_input() -> float:
+func get_direction() -> float:
 	var direction: float
 	if is_dashing:
 		if is_looking_right:
@@ -120,8 +121,8 @@ func get_direction_from_input() -> float:
 
 func set_velocity(direction: float) -> void:
 	if direction:
-		# lower than top speed
 		
+		# lower than top speed
 		# BUG HERE -> if at top speed, changing directions too fast will make the player snap to top speed
 		# instead of decelerating and accelerating again.
 		# to fix this I should check for both positive AND negative top speeds.
