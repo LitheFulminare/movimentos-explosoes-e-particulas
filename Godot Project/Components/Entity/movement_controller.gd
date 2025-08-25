@@ -30,6 +30,8 @@ extends Node
 @export var gravity_scale: float = 1
 @export var falling_scale: float = 1
 
+var right_dash_window_active: bool = false
+var left_dash_window_active: bool = false
 var is_dashing: bool = false
 var is_dash_on_cooldown: bool = false
 var is_looking_right: bool = true
@@ -38,9 +40,11 @@ var double_jump_active:bool = false
 
 @onready var base_walk_speed: float = maximum_walk_speed
 @onready var dash_speed: float = maximum_walk_speed * dash_speed_multiplier
+@onready var current_max_speed: float = maximum_walk_speed
+@onready var current_acceleration: float = acceleration
 
 func move(delta: float) -> void:
-	if !character_body.is_on_floor() && !is_dashing:
+	if !character_body.is_on_floor():
 		character_body.velocity += character_body.get_gravity() * delta
 
 	if Input.is_action_just_pressed("Jump"):
@@ -57,7 +61,20 @@ func move(delta: float) -> void:
 	# dash mechanic
 	if Input.is_action_just_pressed("Right"):
 		# if player presses the movement button again while the window is active, they dash
+		if (right_dash_window_active):
+			dash()
+			
 		dash_window_timer.start()
+		right_dash_window_active = true
+		print("player pressed right")
+		
+	if Input.is_action_just_pressed("Left"):
+		if (left_dash_window_active):
+			dash()
+			
+		dash_window_timer.start()
+		left_dash_window_active = true
+		print("player pressed left")
 		
 	# Old dash logic from Operation Venulysian
 	#if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
@@ -86,14 +103,14 @@ func move(delta: float) -> void:
 			# pressing right
 			if direction == 1:
 				if character_body.velocity.x >= 0:
-					character_body.velocity.x += direction * acceleration
+					character_body.velocity.x += direction * current_acceleration #acceleration
 				else:
 					character_body.velocity.x += direction * deceleration
 			
 			# pressing left
 			if direction == -1:
 				if character_body.velocity.x <= 0:
-					character_body.velocity.x += direction * acceleration
+					character_body.velocity.x += direction * current_acceleration #acceleration
 				else:
 					character_body.velocity.x += direction * deceleration
 			
@@ -109,6 +126,11 @@ func move(delta: float) -> void:
 
 	character_body.move_and_slide()
 
+func dash() -> void:
+	current_max_speed = maximum_walk_speed * dash_speed_multiplier
+	# now the dashing acceleraction is probably fine, but the player can't go past the maximum speed.
+	# I should fix this.
+	current_acceleration = acceleration * 10 # replace with a variable
 
 func _on_dash_duration_timeout() -> void:
 	is_dashing = false
@@ -118,3 +140,12 @@ func _on_dash_duration_timeout() -> void:
 
 func _on_dash_cooldown_timeout() -> void:
 	is_dash_on_cooldown = false
+
+
+func _on_dash_window_timeout() -> void:
+	print("dash window ended")
+	current_max_speed = maximum_walk_speed
+	current_acceleration = acceleration
+	
+	right_dash_window_active = false
+	left_dash_window_active = false
