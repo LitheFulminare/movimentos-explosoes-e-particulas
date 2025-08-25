@@ -100,13 +100,14 @@ func input_check() -> void:
 		print("player pressed left")
 
 func dash() -> void:
+	is_dashing = true
+	
 	current_max_speed = maximum_walk_speed * dash_speed_multiplier
 	current_acceleration = acceleration * 10 # replace with a variable
 	dash_duration_timer.start()
 
 func get_direction_from_input() -> float:
 	var direction: float
-	
 	if is_dashing:
 		if is_looking_right:
 			direction = 1
@@ -156,7 +157,7 @@ func set_velocity(direction: float) -> void:
 		character_body.velocity.x = move_toward(character_body.velocity.x, 0, deceleration)
 
 func _on_dash_duration_timeout() -> void:
-	#is_dashing = false
+	is_dashing = false
 	current_max_speed = maximum_walk_speed
 	current_acceleration = acceleration
 	dash_cooldown_timer.start()
@@ -165,9 +166,6 @@ func _on_dash_duration_timeout() -> void:
 func _on_dash_cooldown_timeout() -> void:
 	is_dash_on_cooldown = false
 
-
 func _on_dash_window_timeout() -> void:
-	print("dash window ended")
-	
 	right_dash_window_active = false
 	left_dash_window_active = false
