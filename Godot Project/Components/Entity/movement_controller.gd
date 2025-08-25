@@ -1,6 +1,9 @@
 class_name MovementComponent
 extends Node
 
+# TODO -> put cooldown on dash
+#      -> hover when holding space after flight ends
+
 @export_group("Components")
 @export var character_body: CharacterBody2D
 @export var dash_window_timer: Timer
@@ -113,7 +116,6 @@ func fly(delta: float) -> void:
 	remaining_flight_duration -= delta
 	
 	if remaining_flight_duration <= 0:
-		print("flight ended")
 		is_flying = false # might replace with 'is_hovering'
 		return
 	
