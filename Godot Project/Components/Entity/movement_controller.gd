@@ -56,8 +56,10 @@ func _ready() -> void:
 
 func move(delta: float) -> void:
 	fall_check(delta)
-
-	input_check(delta)
+	
+	dash_check()
+	
+	jump_and_fly(delta)
 		
 	# Old dash logic from Operation Venulysian
 	#if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
@@ -66,8 +68,7 @@ func move(delta: float) -> void:
 		#maximum_walk_speed = dash_speed
 		#dash_duration_timer.start()
 		
-	var direction: float = get_direction()
-	
+	var direction: float = get_direction_from_input()
 	set_velocity(direction)
 
 	character_body.move_and_slide()
@@ -81,7 +82,7 @@ func fall_check(delta: float) -> void:
 		remaining_flight_duration = flying_duration
 	
 
-func input_check(delta: float) -> void:
+func jump_and_fly(delta: float) -> void:
 	if Input.is_action_pressed("Jump"):
 		if character_body.is_on_floor():
 			character_body.velocity.y = -jump_velocity
@@ -94,7 +95,7 @@ func input_check(delta: float) -> void:
 	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
 		
-	# dash mechanic
+func dash_check() -> void:
 	# when player presses left or right twice quickly, they dash
 	if Input.is_action_just_pressed("Right"):
 		if (right_dash_window_active):
@@ -102,7 +103,6 @@ func input_check(delta: float) -> void:
 			
 		dash_window_timer.start()
 		right_dash_window_active = true
-		print("player pressed right")
 		
 	if Input.is_action_just_pressed("Left"):
 		if (left_dash_window_active):
@@ -110,8 +110,7 @@ func input_check(delta: float) -> void:
 			
 		dash_window_timer.start()
 		left_dash_window_active = true
-		print("player pressed left")
-
+		
 func fly(delta: float) -> void:
 	remaining_flight_duration -= delta
 	
@@ -135,7 +134,7 @@ func dash() -> void:
 	current_acceleration = acceleration * 10 # replace with a variable
 	dash_duration_timer.start()
 
-func get_direction() -> float:
+func get_direction_from_input() -> float:
 	var direction: float
 	if is_dashing:
 		if is_looking_right:
