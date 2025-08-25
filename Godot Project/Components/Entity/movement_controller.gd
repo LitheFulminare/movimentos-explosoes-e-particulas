@@ -37,6 +37,8 @@ var is_dashing: bool = false
 var is_dash_on_cooldown: bool = false
 var is_looking_right: bool = true
 
+var is_flying: bool = false
+
 var double_jump_active:bool = false
 
 @onready var base_walk_speed: float = maximum_walk_speed
@@ -66,7 +68,7 @@ func move(delta: float) -> void:
 	character_body.move_and_slide()
 
 func fall_check(delta: float) -> void:
-	if !character_body.is_on_floor():
+	if !character_body.is_on_floor() && !is_flying:
 		character_body.velocity += character_body.get_gravity() * delta
 
 func input_check() -> void:
@@ -75,6 +77,9 @@ func input_check() -> void:
 			character_body.velocity.y = -jump_velocity
 		else:
 			fly()
+			
+	if Input.is_action_just_released("Jump"):
+		is_flying = false
 	
 	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
@@ -98,7 +103,12 @@ func input_check() -> void:
 		print("player pressed left")
 
 func fly() -> void:
-	print("player is flying")
+	is_flying = true
+	
+	if (character_body.velocity.y < flying_vertical_speed):
+		character_body.velocity.y += acceleration
+		
+	else: character_body.velocity.y = flying_vertical_speed
 
 func dash() -> void:
 	is_dashing = true
