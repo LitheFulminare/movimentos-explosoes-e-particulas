@@ -99,7 +99,7 @@ func move(delta: float) -> void:
 		# BUG HERE -> if at top speed, changing directions too fast will make the player snap to top speed
 		# instead of decelerating and accelerating again.
 		# to fix this I should check for both positive AND negative top speeds.
-		if abs(character_body.velocity.x) < maximum_walk_speed:
+		if abs(character_body.velocity.x) < current_max_speed:
 			# pressing right
 			if direction == 1:
 				if character_body.velocity.x >= 0:
@@ -114,9 +114,15 @@ func move(delta: float) -> void:
 				else:
 					character_body.velocity.x += direction * deceleration
 			
+		# speed higher than top speed (this happens after dashing)
+		elif abs(character_body.velocity.x) > maximum_walk_speed:
+			character_body.velocity.x = move_toward(character_body.velocity.x, current_max_speed, acceleration/2)
+		
 		# at top speed
-		else:
-			character_body.velocity.x = direction * maximum_walk_speed
+		# Checking is velocityX is exactly the same as maximum walk speed will cause problems,
+		# I'll have to create a margin later
+		if abs(character_body.velocity.x) == current_max_speed:
+			character_body.velocity.x = direction * current_max_speed
 			
 		is_looking_right = direction > 0
 	
@@ -131,10 +137,12 @@ func dash() -> void:
 	# now the dashing acceleraction is probably fine, but the player can't go past the maximum speed.
 	# I should fix this.
 	current_acceleration = acceleration * 10 # replace with a variable
+	dash_duration_timer.start()
 
 func _on_dash_duration_timeout() -> void:
-	is_dashing = false
-	maximum_walk_speed = base_walk_speed
+	#is_dashing = false
+	current_max_speed = maximum_walk_speed
+	current_acceleration = acceleration
 	dash_cooldown_timer.start()
 
 
@@ -144,8 +152,6 @@ func _on_dash_cooldown_timeout() -> void:
 
 func _on_dash_window_timeout() -> void:
 	print("dash window ended")
-	current_max_speed = maximum_walk_speed
-	current_acceleration = acceleration
 	
 	right_dash_window_active = false
 	left_dash_window_active = false
