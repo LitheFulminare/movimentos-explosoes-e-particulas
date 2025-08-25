@@ -54,6 +54,7 @@ func _ready() -> void:
 	remaining_flight_duration = flying_duration
 	dash_duration_timer.wait_time = dash_duration
 
+# called by Player on physics_process()
 func move(delta: float) -> void:
 	fall_check(delta)
 	
@@ -61,18 +62,12 @@ func move(delta: float) -> void:
 	
 	jump_and_fly(delta)
 		
-	# Old dash logic from Operation Venulysian
-	#if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
-		#is_dashing = true
-		#is_dash_on_cooldown = true
-		#maximum_walk_speed = dash_speed
-		#dash_duration_timer.start()
-		
 	var direction: float = get_direction_from_input()
 	set_velocity(direction)
 
 	character_body.move_and_slide()
 
+# called every physics frame
 func fall_check(delta: float) -> void:
 	if !character_body.is_on_floor():
 		if !is_flying:
@@ -81,7 +76,7 @@ func fall_check(delta: float) -> void:
 	else:
 		remaining_flight_duration = flying_duration
 	
-
+# called every physics frame
 func jump_and_fly(delta: float) -> void:
 	if Input.is_action_pressed("Jump"):
 		if character_body.is_on_floor():
@@ -95,6 +90,7 @@ func jump_and_fly(delta: float) -> void:
 	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
 		
+# called every physics frame
 func dash_check() -> void:
 	# when player presses left or right twice quickly, they dash
 	if Input.is_action_just_pressed("Right"):
@@ -110,42 +106,8 @@ func dash_check() -> void:
 			
 		dash_window_timer.start()
 		left_dash_window_active = true
-		
-func fly(delta: float) -> void:
-	remaining_flight_duration -= delta
-	
-	if remaining_flight_duration <= 0:
-		is_flying = false # might replace with 'is_hovering'
-		return
-	
-	is_flying = true
-	
-	# make ajustments so the acceleration and deceleration work like the horizontal movement
-	if (character_body.velocity.y < flying_vertical_speed):
-		character_body.velocity.y -= acceleration
-		
-	else: 
-		character_body.velocity.y = flying_vertical_speed
 
-func dash() -> void:
-	is_dashing = true
-	
-	current_max_speed = maximum_walk_speed * dash_speed_multiplier
-	current_acceleration = acceleration * 10 # replace with a variable
-	dash_duration_timer.start()
-
-func get_direction_from_input() -> float:
-	var direction: float
-	if is_dashing:
-		if is_looking_right:
-			direction = 1
-		else:
-			direction = -1
-	else:
-		direction = Input.get_axis("Left", "Right")
-		
-	return direction
-
+# called every physics frame
 func set_velocity(direction: float) -> void:
 	if direction:
 		
@@ -184,16 +146,56 @@ func set_velocity(direction: float) -> void:
 	else:
 		character_body.velocity.x = move_toward(character_body.velocity.x, 0, deceleration)
 
+# called when the player presses "Jump" action
+func fly(delta: float) -> void:
+	remaining_flight_duration -= delta
+	
+	if remaining_flight_duration <= 0:
+		is_flying = false # might replace with 'is_hovering'
+		return
+	
+	is_flying = true
+	
+	# make ajustments so the acceleration and deceleration work like the horizontal movement
+	if (character_body.velocity.y < flying_vertical_speed):
+		character_body.velocity.y -= acceleration
+		
+	else: 
+		character_body.velocity.y = flying_vertical_speed
+
+# called when player presses 'Left' or 'Right' twice quickly
+func dash() -> void:
+	is_dashing = true
+	
+	current_max_speed = maximum_walk_speed * dash_speed_multiplier
+	current_acceleration = acceleration * 10 # replace with a variable
+	dash_duration_timer.start()
+
+# called every physics frame
+func get_direction_from_input() -> float:
+	var direction: float
+	if is_dashing:
+		if is_looking_right:
+			direction = 1
+		else:
+			direction = -1
+	else:
+		direction = Input.get_axis("Left", "Right")
+		
+	return direction
+
+# when dash ends
 func _on_dash_duration_timeout() -> void:
 	is_dashing = false
 	current_max_speed = maximum_walk_speed
 	current_acceleration = acceleration
 	dash_cooldown_timer.start()
 
-
+# when dash cooldown ends
 func _on_dash_cooldown_timeout() -> void:
 	is_dash_on_cooldown = false
 
+# when dash window ends
 func _on_dash_window_timeout() -> void:
 	right_dash_window_active = false
 	left_dash_window_active = false
