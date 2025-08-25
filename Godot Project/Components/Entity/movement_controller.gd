@@ -37,6 +37,7 @@ var is_dashing: bool = false
 var is_dash_on_cooldown: bool = false
 var is_looking_right: bool = true
 
+var remaining_flight_duration: float
 var is_flying: bool = false
 
 var double_jump_active:bool = false
@@ -47,12 +48,13 @@ var double_jump_active:bool = false
 @onready var current_acceleration: float = acceleration
 
 func _ready() -> void:
+	remaining_flight_duration = flying_duration
 	dash_duration_timer.wait_time = dash_duration
 
 func move(delta: float) -> void:
 	fall_check(delta)
 
-	input_check()
+	input_check(delta)
 		
 	# Old dash logic from Operation Venulysian
 	#if PlayerVars.dash_unlocked && Input.is_action_just_pressed("Dash") && !is_dash_on_cooldown:
@@ -68,15 +70,20 @@ func move(delta: float) -> void:
 	character_body.move_and_slide()
 
 func fall_check(delta: float) -> void:
-	if !character_body.is_on_floor() && !is_flying:
-		character_body.velocity += character_body.get_gravity() * delta
+	if !character_body.is_on_floor():
+		if !is_flying:
+			character_body.velocity += character_body.get_gravity() * delta
+			
+	else:
+		remaining_flight_duration = flying_duration
+	
 
-func input_check() -> void:
+func input_check(delta: float) -> void:
 	if Input.is_action_pressed("Jump"):
 		if character_body.is_on_floor():
 			character_body.velocity.y = -jump_velocity
 		else:
-			fly()
+			fly(delta)
 			
 	if Input.is_action_just_released("Jump"):
 		is_flying = false
@@ -102,11 +109,17 @@ func input_check() -> void:
 		left_dash_window_active = true
 		print("player pressed left")
 
-func fly() -> void:
+func fly(delta: float) -> void:
+	remaining_flight_duration -= delta
+	
+	if remaining_flight_duration <= 0:
+		print("flight ended")
+		is_flying = false # might replace with 'is_hovering'
+		return
+	
 	is_flying = true
 	
 	# make ajustments so the acceleration and deceleration work like the horizontal movement
-	
 	if (character_body.velocity.y < flying_vertical_speed):
 		character_body.velocity.y -= acceleration
 		
