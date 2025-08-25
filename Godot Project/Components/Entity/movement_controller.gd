@@ -15,6 +15,7 @@ extends Node
 
 @export_subgroup("Dash")
 @export var dash_speed_multiplier: float = 5
+@export var dash_duration: float = 0.25
 
 @export_subgroup("Jump")
 @export var jump_velocity: float = 400
@@ -42,6 +43,9 @@ var double_jump_active:bool = false
 @onready var dash_speed: float = maximum_walk_speed * dash_speed_multiplier
 @onready var current_max_speed: float = maximum_walk_speed
 @onready var current_acceleration: float = acceleration
+
+func _ready() -> void:
+	dash_duration_timer.wait_time = dash_duration
 
 func move(delta: float) -> void:
 	if !character_body.is_on_floor():
@@ -116,10 +120,10 @@ func move(delta: float) -> void:
 			
 		# speed higher than top speed (this happens after dashing)
 		elif abs(character_body.velocity.x) > maximum_walk_speed:
-			character_body.velocity.x = move_toward(character_body.velocity.x, current_max_speed, acceleration/2)
+			character_body.velocity.x = move_toward(character_body.velocity.x, current_max_speed, acceleration*1.5)
 		
 		# at top speed
-		# Checking is velocityX is exactly the same as maximum walk speed will cause problems,
+		# Checking is velocityX is exactly the same as maximum walk speed might cause problems,
 		# I'll have to create a margin later
 		if abs(character_body.velocity.x) == current_max_speed:
 			character_body.velocity.x = direction * current_max_speed
