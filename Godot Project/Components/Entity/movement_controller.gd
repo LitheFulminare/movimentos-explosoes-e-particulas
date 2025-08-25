@@ -78,6 +78,10 @@ func move(delta: float) -> void:
 	
 	if direction:
 		# lower than top speed
+		
+		# BUG HERE -> if at top speed, changing directions too fast will make the player snap to top speed
+		# instead of decelerating and accelerating again.
+		# to fix this I should check for both positive AND negative top speeds.
 		if abs(character_body.velocity.x) < maximum_walk_speed:
 			# pressing right
 			if direction == 1:

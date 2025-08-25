@@ -20,9 +20,10 @@ script = ExtResource("1_4ntmi")
 movement_component = NodePath("Movement Controller")
 grappling_hook_component = NodePath("Grappling Hook Controller")
 
-[node name="Movement Controller" type="Node" parent="." node_paths=PackedStringArray("character_body", "dash_duration_timer", "dash_cooldown_timer")]
+[node name="Movement Controller" type="Node" parent="." node_paths=PackedStringArray("character_body", "dash_window_timer", "dash_duration_timer", "dash_cooldown_timer")]
 script = ExtResource("1_l8h54")
 character_body = NodePath("..")
+dash_window_timer = NodePath("../Dash Window")
 dash_duration_timer = NodePath("../Dash Duration")
 dash_cooldown_timer = NodePath("../Dash Cooldown")
 maximum_walk_speed = 900.0
