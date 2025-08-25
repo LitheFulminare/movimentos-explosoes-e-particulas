@@ -105,6 +105,8 @@ func input_check() -> void:
 func fly() -> void:
 	is_flying = true
 	
+	# make ajustments so the acceleration and deceleration work like the horizontal movement
+	
 	if (character_body.velocity.y < flying_vertical_speed):
 		character_body.velocity.y -= acceleration
 		
