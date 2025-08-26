@@ -1,8 +1,7 @@
 class_name MovementComponent
 extends Node
 
-# TODO -> put cooldown on dash
-#      -> hover when holding space after flight ends
+# TODO -> hover when holding space after flight ends
 
 @export_group("Components")
 @export var character_body: CharacterBody2D
@@ -165,11 +164,16 @@ func fly(delta: float) -> void:
 
 # called when player presses 'Left' or 'Right' twice quickly
 func dash() -> void:
+	if is_dash_on_cooldown:
+		return
+	
 	is_dashing = true
+	is_dash_on_cooldown = true
 	
 	current_max_speed = maximum_walk_speed * dash_speed_multiplier
 	current_acceleration = acceleration * 10 # replace with a variable
 	dash_duration_timer.start()
+	dash_cooldown_timer.start()
 
 # called every physics frame
 func get_direction_from_input() -> float:
