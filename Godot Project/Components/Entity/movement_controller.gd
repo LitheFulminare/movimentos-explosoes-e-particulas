@@ -1,7 +1,9 @@
 class_name MovementComponent
 extends Node
 
-# TODO -> hover when holding space after flight ends
+# TODO 
+# -> (fix) hover when holding space after flight ends
+# -> pressing 'Up' when flying increases acceleration
 
 @export_group("Components")
 @export var character_body: CharacterBody2D
