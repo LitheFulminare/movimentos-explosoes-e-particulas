@@ -41,6 +41,7 @@ var is_looking_right: bool = true
 
 var remaining_flight_duration: float
 var is_flying: bool = false
+var is_hovering: bool = false
 
 var double_jump_active:bool = false
 
@@ -72,6 +73,10 @@ func fall_check(delta: float) -> void:
 		if !is_flying:
 			character_body.velocity += character_body.get_gravity() * delta
 			
+			# BUG -> stop hover makes velocityY snaps to 0
+			if is_hovering:
+				if character_body.velocity.y > 450:
+					character_body.velocity.y = 450
 	else:
 		remaining_flight_duration = flying_duration
 	
@@ -85,6 +90,7 @@ func jump_and_fly(delta: float) -> void:
 			
 	if Input.is_action_just_released("Jump"):
 		is_flying = false
+		is_hovering = false
 	
 	if Input.is_action_just_released("Jump"):
 		character_body.velocity.y *= jump_release_deceleration
@@ -150,7 +156,8 @@ func fly(delta: float) -> void:
 	remaining_flight_duration -= delta
 	
 	if remaining_flight_duration <= 0:
-		is_flying = false # might replace with 'is_hovering'
+		is_flying = false
+		is_hovering = true
 		return
 	
 	is_flying = true
