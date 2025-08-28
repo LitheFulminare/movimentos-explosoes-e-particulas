@@ -31,6 +31,7 @@ acceleration = 10.0
 deceleration = 120.0
 jump_velocity = 450.0
 jump_release_deceleration = 0.35
+flying_duration = 1.0
 flying_vertical_speed = 1800.0
 
 [node name="Grappling Hook Controller" type="Node" parent="." node_paths=PackedStringArray("player", "path_2d", "path_follow_2d", "line2d")]

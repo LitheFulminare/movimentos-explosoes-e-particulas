@@ -70,34 +70,21 @@ func move(delta: float) -> void:
 	character_body.move_and_slide()
 
 # called every physics frame
+## Checks if playing is falling and applies gravity. Also checks if they are hovering.
 func fall_check(delta: float) -> void:
 	if !character_body.is_on_floor():
 		if !is_flying:
 			character_body.velocity += character_body.get_gravity() * delta
 			
-			# BUG -> stop hover makes velocityY snaps to 0
+			# BUG -> stop hover makes velocityY snap to 0
 			if is_hovering:
 				if character_body.velocity.y > 450:
 					character_body.velocity.y = 450
 	else:
 		remaining_flight_duration = flying_duration
-	
+
 # called every physics frame
-func jump_and_fly(delta: float) -> void:
-	if Input.is_action_pressed("Jump"):
-		if character_body.is_on_floor():
-			character_body.velocity.y = -jump_velocity
-		else:
-			fly(delta)
-			
-	if Input.is_action_just_released("Jump"):
-		is_flying = false
-		is_hovering = false
-	
-	if Input.is_action_just_released("Jump"):
-		character_body.velocity.y *= jump_release_deceleration
-		
-# called every physics frame
+## Checks if the player pressed Left or Right twice to call the dash() function.
 func dash_check() -> void:
 	# when player presses left or right twice quickly, they dash
 	if Input.is_action_just_pressed("Right"):
@@ -113,8 +100,26 @@ func dash_check() -> void:
 			
 		dash_window_timer.start()
 		left_dash_window_active = true
+		
+# called every physics frame
+## Handles actions regarding the Jump button, like jumping and flying
+func jump_and_fly(delta: float) -> void:
+	if Input.is_action_pressed("Jump"):
+		if character_body.is_on_floor():
+			character_body.velocity.y = -jump_velocity
+		else:
+			fly(delta)
+			
+	if Input.is_action_just_released("Jump"):
+		is_flying = false
+		is_hovering = false
+	
+	if Input.is_action_just_released("Jump"):
+		character_body.velocity.y *= jump_release_deceleration
+		
 
 # called every physics frame
+## Sets the X Velocity depending on the direction provided. Also handles acceleration and deceleration.
 func set_velocity(direction: float) -> void:
 	if direction:
 		
@@ -154,6 +159,7 @@ func set_velocity(direction: float) -> void:
 		character_body.velocity.x = move_toward(character_body.velocity.x, 0, deceleration)
 
 # called when the player presses "Jump" action
+## Handles flying and hovering actions. Changes the Y Velocity
 func fly(delta: float) -> void:
 	remaining_flight_duration -= delta
 	
