@@ -78,8 +78,7 @@ func fall_check(delta: float) -> void:
 			
 			# BUG -> stop hover makes velocityY snap to 0
 			if is_hovering:
-				if character_body.velocity.y > 450:
-					character_body.velocity.y = 450
+				character_body.velocity.y = 450
 	else:
 		remaining_flight_duration = flying_duration
 
@@ -110,13 +109,12 @@ func jump_and_fly(delta: float) -> void:
 		else:
 			fly(delta)
 			
+	if Input.is_action_just_released("Jump") && !is_hovering:
+		character_body.velocity.y *= jump_release_deceleration
+	
 	if Input.is_action_just_released("Jump"):
 		is_flying = false
 		is_hovering = false
-	
-	if Input.is_action_just_released("Jump"):
-		character_body.velocity.y *= jump_release_deceleration
-		
 
 # called every physics frame
 ## Sets the X Velocity depending on the direction provided. Also handles acceleration and deceleration.
