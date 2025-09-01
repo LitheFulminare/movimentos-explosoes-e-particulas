@@ -136,14 +136,21 @@ func set_velocity(direction: float) -> void:
 			# pressing right
 			if direction == 1:
 				if character_body.velocity.x >= 0:
-					character_body.velocity.x += direction * current_acceleration
+					if (character_body.velocity.x >= maximum_walk_speed / 2 && !is_dashing):
+						character_body.velocity.x += direction * current_acceleration / acceleration_falloff
+					else:
+						character_body.velocity.x += direction * current_acceleration
 				else:
 					character_body.velocity.x += direction * deceleration
 			
 			# pressing left
 			if direction == -1:
 				if character_body.velocity.x <= 0:
-					character_body.velocity.x += direction * current_acceleration
+					if (character_body.velocity.x <= -maximum_walk_speed / 2 && !is_dashing):
+						character_body.velocity.x += direction * current_acceleration / acceleration_falloff
+					else:
+						character_body.velocity.x += direction * current_acceleration
+						
 				else:
 					character_body.velocity.x += direction * deceleration
 			

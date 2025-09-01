@@ -19,6 +19,7 @@ dash_duration_timer = NodePath("Dash Duration")
 dash_cooldown_timer = NodePath("Dash Cooldown")
 maximum_walk_speed = 900.0
 acceleration = 10.0
+acceleration_falloff = 1000.0
 deceleration = 60.0
 jump_velocity = 450.0
 jump_release_deceleration = 0.35
