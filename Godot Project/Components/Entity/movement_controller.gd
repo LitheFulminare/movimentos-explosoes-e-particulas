@@ -176,7 +176,7 @@ func fly(delta: float) -> void:
 	# make ajustments so the acceleration and deceleration work like the horizontal movement
 	if (character_body.velocity.y < flying_vertical_speed):
 		if Input.is_action_pressed("Up"):
-			character_body.velocity.y -= acceleration * 1.5
+			character_body.velocity.y -= acceleration * flying_acceleration_multiplier
 		else:
 			character_body.velocity.y -= acceleration
 		

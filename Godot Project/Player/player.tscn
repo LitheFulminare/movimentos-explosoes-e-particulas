@@ -1,71 +1,39 @@
-[gd_scene load_steps=7 format=3 uid="uid://b1vtmnwr2sk4q"]
+[gd_scene load_steps=4 format=3 uid="uid://b1vtmnwr2sk4q"]
 
 [ext_resource type="Script" uid="uid://creutxpg4tk0i" path="res://Player/player.gd" id="1_4ntmi"]
 [ext_resource type="Script" uid="uid://b4yrdgvplq3aq" path="res://Components/Entity/movement_controller.gd" id="1_l8h54"]
-[ext_resource type="Script" uid="uid://bja0wtxt55a36" path="res://Player/grappling_hook_controller.gd" id="3_btcbx"]
-[ext_resource type="Texture2D" uid="uid://wsc0yr7432b8" path="res://Player/Sprites/Chain tilable 2.png" id="4_gwnis"]
-
-[sub_resource type="Curve2D" id="Curve2D_btcbx"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0, 0, -250, -250, 0, 0, 475, -548)
-}
-point_count = 2
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vfyey"]
 size = Vector2(80, 150)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("movement_component", "grappling_hook_component")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("movement_component")]
 collision_layer = 2
 script = ExtResource("1_4ntmi")
 movement_component = NodePath("Movement Controller")
-grappling_hook_component = NodePath("Grappling Hook Controller")
 
 [node name="Movement Controller" type="Node" parent="." node_paths=PackedStringArray("character_body", "dash_window_timer", "dash_duration_timer", "dash_cooldown_timer")]
 script = ExtResource("1_l8h54")
 character_body = NodePath("..")
-dash_window_timer = NodePath("../Dash Window")
-dash_duration_timer = NodePath("../Dash Duration")
-dash_cooldown_timer = NodePath("../Dash Cooldown")
+dash_window_timer = NodePath("Dash Window")
+dash_duration_timer = NodePath("Dash Duration")
+dash_cooldown_timer = NodePath("Dash Cooldown")
 maximum_walk_speed = 900.0
 acceleration = 10.0
 deceleration = 60.0
 jump_velocity = 450.0
 jump_release_deceleration = 0.35
 flying_vertical_speed = 1800.0
+flying_acceleration_multiplier = 1.5
 
-[node name="Grappling Hook Controller" type="Node" parent="." node_paths=PackedStringArray("player", "path_2d", "path_follow_2d", "line2d")]
-script = ExtResource("3_btcbx")
-player = NodePath("..")
-path_2d = NodePath("Path2D")
-path_follow_2d = NodePath("Path2D/PathFollow2D")
-line2d = NodePath("Line2D")
-player_speed = 1.65
-
-[node name="Path2D" type="Path2D" parent="Grappling Hook Controller"]
-curve = SubResource("Curve2D_btcbx")
-
-[node name="PathFollow2D" type="PathFollow2D" parent="Grappling Hook Controller/Path2D"]
-rotation = -0.856636
-loop = false
-
-[node name="Line2D" type="Line2D" parent="Grappling Hook Controller"]
-visible = false
-texture_repeat = 2
-position = Vector2(46, -24.25)
-points = PackedVector2Array(78.4286, -71.5357, 0, 0)
-width = 35.0
-texture = ExtResource("4_gwnis")
-texture_mode = 1
-
-[node name="Dash Window" type="Timer" parent="."]
+[node name="Dash Window" type="Timer" parent="Movement Controller"]
 wait_time = 0.25
 one_shot = true
 
-[node name="Dash Duration" type="Timer" parent="."]
+[node name="Dash Duration" type="Timer" parent="Movement Controller"]
 wait_time = 0.2
 one_shot = true
 
-[node name="Dash Cooldown" type="Timer" parent="."]
+[node name="Dash Cooldown" type="Timer" parent="Movement Controller"]
 wait_time = 0.75
 one_shot = true
 
@@ -83,6 +51,6 @@ metadata/_edit_use_anchors_ = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_vfyey")
 
-[connection signal="timeout" from="Dash Window" to="Movement Controller" method="_on_dash_window_timeout"]
-[connection signal="timeout" from="Dash Duration" to="Movement Controller" method="_on_dash_duration_timeout"]
-[connection signal="timeout" from="Dash Cooldown" to="Movement Controller" method="_on_dash_cooldown_timeout"]
+[connection signal="timeout" from="Movement Controller/Dash Window" to="Movement Controller" method="_on_dash_window_timeout"]
+[connection signal="timeout" from="Movement Controller/Dash Duration" to="Movement Controller" method="_on_dash_duration_timeout"]
+[connection signal="timeout" from="Movement Controller/Dash Cooldown" to="Movement Controller" method="_on_dash_cooldown_timeout"]
