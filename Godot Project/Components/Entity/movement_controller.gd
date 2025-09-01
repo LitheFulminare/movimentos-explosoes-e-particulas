@@ -11,6 +11,7 @@ extends Node
 @export_subgroup("Walk")
 @export var maximum_walk_speed: float = 300
 @export var acceleration: float = 50
+@export var acceleration_falloff: float = 2
 @export var deceleration: float = 40
 
 @export_subgroup("Dash")
@@ -92,14 +93,14 @@ func fall_check(delta: float) -> void:
 func dash_check() -> void:
 	# when player presses left or right twice quickly, they dash
 	if Input.is_action_just_pressed("Right"):
-		if (right_dash_window_active):
+		if right_dash_window_active:
 			dash()
 			
 		dash_window_timer.start()
 		right_dash_window_active = true
 		
 	if Input.is_action_just_pressed("Left"):
-		if (left_dash_window_active):
+		if left_dash_window_active:
 			dash()
 			
 		dash_window_timer.start()
@@ -181,7 +182,7 @@ func fly(delta: float) -> void:
 			character_body.velocity.y -= acceleration
 		
 	else: 
-		character_body.velocity.y = flying_vertical_speed
+		character_body.velocity.y = -flying_vertical_speed
 
 # called when player presses 'Left' or 'Right' twice quickly
 func dash() -> void:
