@@ -29,7 +29,9 @@ extends Node
 
 @export_subgroup("Fall")
 @export var gravity_scale: float = 1
+## NOT IN USE
 @export var falling_scale: float = 1
+@export var maximum_falling_speed: float = 1500
 
 var right_dash_window_active: bool = false
 var left_dash_window_active: bool = false
@@ -68,15 +70,22 @@ func move(delta: float) -> void:
 # called every physics frame
 ## Checks if playing is falling and applies gravity. Also checks if they are hovering.
 func fall_check(delta: float) -> void:
-	if !character_body.is_on_floor():
-		if !is_flying:
-			character_body.velocity += character_body.get_gravity() * delta
-			
-			# BUG -> stop hover makes velocityY snap to 0
-			if is_hovering:
-				character_body.velocity.y = 450
-	else:
+	if character_body.is_on_floor():
 		remaining_flight_duration = flying_duration
+		return
+		
+	if is_flying:
+		return
+	
+	if character_body.velocity.y < maximum_falling_speed:
+		character_body.velocity += character_body.get_gravity() * delta
+	else:
+		character_body.velocity.y = maximum_falling_speed
+	
+	if !is_hovering:
+		return
+		
+	character_body.velocity.y = move_toward(character_body.velocity.y, 450, acceleration*4)
 
 # called every physics frame
 ## Checks if the player pressed Left or Right twice to call the dash() function.
