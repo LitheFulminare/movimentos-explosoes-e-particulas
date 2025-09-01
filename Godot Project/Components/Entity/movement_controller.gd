@@ -1,10 +1,6 @@
 class_name MovementComponent
 extends Node
 
-# TODO 
-# -> (fix) hover when holding space after flight ends
-# -> pressing 'Up' when flying increases acceleration
-
 @export_group("Components")
 @export var character_body: CharacterBody2D
 @export var dash_window_timer: Timer
@@ -129,20 +125,20 @@ func set_velocity(direction: float) -> void:
 			# pressing right
 			if direction == 1:
 				if character_body.velocity.x >= 0:
-					character_body.velocity.x += direction * current_acceleration #acceleration
+					character_body.velocity.x += direction * current_acceleration / 1.5
 				else:
 					character_body.velocity.x += direction * deceleration
 			
 			# pressing left
 			if direction == -1:
 				if character_body.velocity.x <= 0:
-					character_body.velocity.x += direction * current_acceleration #acceleration
+					character_body.velocity.x += direction * current_acceleration
 				else:
 					character_body.velocity.x += direction * deceleration
 			
 		# speed higher than top speed (this happens after dashing)
 		elif abs(character_body.velocity.x) > maximum_walk_speed:
-			character_body.velocity.x = move_toward(character_body.velocity.x, current_max_speed, acceleration*1.5)
+			character_body.velocity.x = move_toward(character_body.velocity.x, current_max_speed, deceleration/2)
 		
 		# at top speed
 		# Checking is velocityX is exactly the same as maximum walk speed might cause problems,
@@ -170,7 +166,10 @@ func fly(delta: float) -> void:
 	
 	# make ajustments so the acceleration and deceleration work like the horizontal movement
 	if (character_body.velocity.y < flying_vertical_speed):
-		character_body.velocity.y -= acceleration
+		if Input.is_action_pressed("Up"):
+			character_body.velocity.y -= acceleration * 1.5
+		else:
+			character_body.velocity.y -= acceleration
 		
 	else: 
 		character_body.velocity.y = flying_vertical_speed
