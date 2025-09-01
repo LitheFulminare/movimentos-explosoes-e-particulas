@@ -68,7 +68,7 @@ func move(delta: float) -> void:
 	character_body.move_and_slide()
 
 # called every physics frame
-## Checks if playing is falling and applies gravity. Also checks if they are hovering.
+## Checks if player is falling and applies gravity. Also checks if they are hovering.
 func fall_check(delta: float) -> void:
 	if character_body.is_on_floor():
 		remaining_flight_duration = flying_duration
