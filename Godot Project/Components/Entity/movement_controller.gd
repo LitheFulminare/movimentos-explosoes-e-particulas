@@ -29,8 +29,9 @@ extends Node
 @export var flying_acceleration_multiplier: float = 2
 
 @export_subgroup("Fall")
+## [color=red] NOT IN USE
 @export var gravity_scale: float = 1
-## NOT IN USE
+## [color=red] NOT IN USE
 @export var falling_scale: float = 1
 @export var maximum_falling_speed: float = 1500
 
@@ -135,7 +136,7 @@ func set_velocity(direction: float) -> void:
 			# pressing right
 			if direction == 1:
 				if character_body.velocity.x >= 0:
-					character_body.velocity.x += direction * current_acceleration / 1.5
+					character_body.velocity.x += direction * current_acceleration
 				else:
 					character_body.velocity.x += direction * deceleration
 			
